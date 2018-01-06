@@ -1,7 +1,7 @@
 module Ruboty
-  module Timeclock
+  module TimeClock
     module Actions
-      class Timeclock < Ruboty::Actions::Base
+      class TimeClock < Ruboty::Actions::Base
         def call
           message.reply('dummy')
         end
