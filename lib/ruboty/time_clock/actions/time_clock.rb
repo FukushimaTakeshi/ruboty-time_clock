@@ -20,19 +20,30 @@ module Ruboty
       class TimeClock < Ruboty::Actions::Base
         include Capybara::DSL
 
-        attr_reader :message, :id, :password
+        attr_reader :message, :id, :password, :start_time, :end_time
 
-        def initialize(message:, id:, password:)
+        def initialize(message:, id:, password:, start_time:, end_time:)
           @message = message
           @id = id
           @password = password
+          @start_time = start_time
+          @end_time = end_time
         end
 
         def call
-          message.reply(login)
+          login
+          select_date
+          register_attendance
+          if success?
+            message.reply('登録しました')
+          else
+            message.reply('失敗しました >_<;')
+          end
+          logout
         end
 
         private
+
 
         def login
           page.driver.headers = { 'User-Agent': 'Mac Safari' }
@@ -41,11 +52,40 @@ module Ruboty
           find(:xpath, "//input[@class='InputTxtL'][@name='PersonCode']").set(id)
           find(:xpath, "//input[@class='InputTxtL'][@name='Password']").set(password)
           find(:xpath, "//*/a").click
-          p find(:xpath, "/html/body/form[3]/center[1]/table/tbody/tr/td/font").text
-          find(:xpath, "/html/body/form[3]/center[1]/table/tbody/tr/td/font").text
+        end
+
+        def select_date
+          page.accept_alert
+
+          # frame name="MENU" の操作
+          page.driver.within_frame('MENU') do
+            # カレンダーから対象日をクリック
+            find(:xpath, "//*[@id='side00']//tbody//table[2]").all('a').each do |link|
+              link.click if link.text == '15'
+            end
+          end
         end
 
         def register_attendance
+          page.driver.within_frame('OPERATION') do
+            if start_time && end_time
+              find(:xpath, "//*[@class='InputTxtR'][@name='StartTime']").set(start_time)
+              find(:xpath, "//*[@class='InputTxtR'][@name='EndTime']").set(end_time)
+            end
+            find(:xpath, "//a[2]/img").click
+          end
+        end
+
+        def success?
+          page.driver.within_frame('OPERATION') do
+            find(:xpath, "//*[@class='BdCel2'][@align='CENTER']").has_text?('△')
+          end
+        end
+
+        def logout
+          page.driver.within_frame('MENU') do
+            find(:xpath, "//*/table[10]//td[2]//img").click
+          end
         end
       end
     end
