@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/dsl'
 require 'capybara/poltergeist'
+require 'holiday_jp'
 
 Capybara.configure do |config|
   config.run_server = false
@@ -44,7 +45,6 @@ module Ruboty
 
         private
 
-
         def login
           page.driver.headers = { 'User-Agent': 'Mac Safari' }
           visit('')
@@ -56,14 +56,26 @@ module Ruboty
 
         def select_date
           page.accept_alert
-
           # frame name="MENU" の操作
           page.driver.within_frame('MENU') do
-            # カレンダーから対象日をクリック
+            # カレンダーから前営業日をクリック
             find(:xpath, "//*[@id='side00']//tbody//table[2]").all('a').each do |link|
-              link.click if link.text == '15'
+              link.click if link.text == last_business_day
             end
           end
+        end
+
+        def last_business_day(today = Date.today - 1 )
+          if today.wday == 6 # Sat.
+            today -= 1
+          elsif today.wday == 0 # Sun.
+            today -= 2
+          elsif HolidayJp.holiday?(today) # public holiday
+            today -= 1
+          else
+            return today.day.to_s
+          end
+          last_business_day(today)
         end
 
         def register_attendance

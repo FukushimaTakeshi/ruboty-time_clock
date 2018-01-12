@@ -3,7 +3,7 @@ require "ruboty/time_clock/actions/time_clock"
 module Ruboty
   module Handlers
     class TimeClock < Base
-      on /time_clock (?<id>.*?) (?<password>.*?) (?<start_time>.*?) (?<end_time>.*?)\z/, name: 'time_clock', description: 'output time_clock result'
+      on /chronus (?<id>.*?) (?<password>.*?) (?<start_time>.*?) (?<end_time>.*?)\z/, name: 'time_clock', description: 'output time_clock result'
 
       def time_clock(message)
         Ruboty::TimeClock::Actions::TimeClock.new(time_clock_params(message)).call

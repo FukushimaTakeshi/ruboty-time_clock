@@ -1,4 +1,3 @@
-# coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "ruboty/time_clock/version"
@@ -9,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Fukushima Takeshi"]
   spec.email         = ["whippet.818@gmail.com"]
 
-  spec.summary       = "Ruboty Handler"
-  spec.description   = "Ruboty Handler"
+  spec.summary       = "Ruboty chronus Handler"
+  spec.description   = "Ruboty chronus Handler"
   spec.homepage      = "https://github.com/FukushimaTakeshi/ruboty-time_clock"
   spec.license       = "MIT"
 
@@ -22,9 +21,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "ruboty"
-
   spec.add_runtime_dependency "capybara"
   spec.add_runtime_dependency "poltergeist"
+  spec.add_runtime_dependency "holiday_jp"
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
